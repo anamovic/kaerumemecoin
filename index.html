@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KAERU: Meme Coin</title>
+    <link rel="icon" type="image/png" href="katak2.png">
+    <meta property="og:title" content="KAERU: Meme Coin">
+    <meta property="og:description" content="AI coins claim to revolutionize DeFi. We just draw pixel art and roast them.">
+    <meta property="og:type" content="website">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *{box-sizing:border-box;margin:0;padding:0;cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='22' viewBox='0 0 16 22'%3E%3Cpath d='M0 0L0 16L4.5 11.5L14 21L16 18.5L6.5 9L16 -0.5L14 -3L4.5 6.5Z' fill='%2300ff41'/%3E%3C/svg%3E") 0 0, auto}
+        body{
+            background:#000;color:#fff;font-family:'Rajdhani',sans-serif;
+            overflow-x:hidden;min-height:100vh;
+        }
+        #c{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:0;
+            cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='22' viewBox='0 0 16 22'%3E%3Cpath d='M0 0L0 16L4.5 11.5L14 21L16 18.5L6.5 9L16 -0.5L14 -3L4.5 6.5Z' fill='%2300ff41'/%3E%3C/svg%3E") 0 0, auto;
+        }
+
+        .hamburger{
+            position:fixed;top:20px;right:20px;z-index:1001;
+            width:44px;height:44px;
+            display:flex;flex-direction:column;justify-content:center;align-items:center;
+            transition:transform .3s ease, opacity .3s ease;
+            cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='22' viewBox='0 0 16 22'%3E%3Cpath d='M0 0L0 16L4.5 11.5L14 21L16 18.5L6.5 9L16 -0.5L14 -3L4.5 6.5Z' fill='%2300ff41'/%3E%3C/svg%3E") 0 0, auto;
+        }
+        .hamburger:hover{transform:scale(1.1);opacity:.8}
+        .hamburger span{
+            display:block;width:22px;height:1.5px;
+            background:rgba(0,255,65,.6);border-radius:1px;
+            transition:all .3s ease;transform-origin:center;
+        }
+        .hamburger span:nth-child(2){margin:5px 0}
+        .hamburger.active span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+        .hamburger.active span:nth-child(2){opacity:0}
+        .hamburger.active span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+
+        .side-menu{
+            position:fixed;top:0;right:-320px;width:320px;height:100vh;
+            background:rgba(0,8,2,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+            border-left:1px solid rgba(0,255,65,.2);z-index:1000;
+            padding:80px 25px 40px 25px;
+            transition:right .4s cubic-bezier(.77,0,.175,1);
+            display:flex;flex-direction:column;box-shadow:-10px 0 40px rgba(0,0,0,.8);overflow:hidden;
+            cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='22' viewBox='0 0 16 22'%3E%3Cpath d='M0 0L0 16L4.5 11.5L14 21L16 18.5L6.5 9L16 -0.5L14 -3L4.5 6.5Z' fill='%2300ff41'/%3E%3C/svg%3E") 0 0, auto;
+        }
+        .side-menu.active{right:0}
+        .menu-links{
+            display:flex;flex-direction:column;gap:12px;
+            overflow-y:auto;flex:1;padding-bottom:10px;
+            scrollbar-width:none; -ms-overflow-style:none;
+        }
+        .menu-links::-webkit-scrollbar{display:none}
+        
+        .menu-btn{width:100%;cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='22' viewBox='0 0 16 22'%3E%3Cpath d='M0 0L0 16L4.5 11.5L14 21L16 18.5L6.5 9L16 -0.5L14 -3L4.5 6.5Z' fill='%2300ff41'/%3E%3C/svg%3E") 0 0, auto}
+        .menu-divider{width:100%;height:1px;background:rgba(0,255,65,.1);margin:10px 0}
+
+        .menu-footer{
+            padding:18px 0 0 0;border-top:1px solid rgba(0,255,65,.1);
+            text-align:center;flex-shrink:0;
+        }
+        .menu-footer .footer-frog{font-size:18px;margin-bottom:6px;opacity:.5}
+        .menu-footer .footer-text{
+            font-family:'Orbitron',sans-serif;font-size:7px;
+            color:rgba(0,255,65,.2);letter-spacing:2px;line-height:1.8;
+        }
+
+        .content-wrapper{
+            position:relative;z-index:10;height:100vh;margin:0;padding:0;
+            display:flex;flex-direction:column;align-items:center;
+            justify-content:flex-start;padding-top:13vh;
+            background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;
+            border:none;border-radius:0;box-shadow:none;pointer-events:none;
+            width:100%;padding-left:15px;padding-right:15px;
+        }
+        .content-wrapper::before,.content-wrapper::after{display:none}
+
+        h1{
+            font-family:'Orbitron',sans-serif;font-size:72px;font-weight:900;color:#fff;
+            text-shadow:
+                3px 0 0 rgba(255,0,50,.5),
+                -3px 0 0 rgba(0,150,255,.5),
+                0 0 12px rgba(0,255,65,.5),
+                0 0 25px rgba(0,255,65,.25);
+            letter-spacing:16px;line-height:1.2;text-align:center;
+            transition:text-shadow .08s ease;
+        }
+        h1.glitching{
+            text-shadow:
+                5px 0 0 rgba(255,0,50,.6),
+                -5px 0 0 rgba(0,150,255,.6),
+                0 0 15px rgba(0,255,65,.6),
+                0 0 30px rgba(0,255,65,.3);
+        }
+
+        .sub-meme{
+            font-family:'Orbitron',sans-serif;font-size:18px;font-weight:400;
+            color:rgba(0,255,65,.7);letter-spacing:24px;text-transform:uppercase;
+            margin-top:10px;margin-bottom:30px;
+            text-shadow:
+                2px 0 0 rgba(255,0,50,.45),
+                -2px 0 0 rgba(0,150,255,.45),
+                0 0 10px rgba(0,255,65,.5),
+                0 0 20px rgba(0,255,65,.2);
+            text-align:center;
+            transition:text-shadow .08s ease;
+        }
+        .sub-meme.glitching{
+            text-shadow:
+                4px 0 0 rgba(255,0,50,.6),
+                -4px 0 0 rgba(0,150,255,.6),
+                0 0 14px rgba(0,255,65,.6),
+                0 0 28px rgba(0,255,65,.3);
+        }
+
+        .logo-img{
+            width:320px;height:320px;object-fit:contain;
+            margin-top:-35px;
+            filter:drop-shadow(0 0 20px rgba(0,255,65,.35)) drop-shadow(0 0 60px rgba(0,255,65,.15));
+            animation:logo-breathe 4s ease-in-out infinite;
+            pointer-events:auto;
+        }
+        @keyframes logo-breathe{
+            0%,100%{filter:drop-shadow(0 0 20px rgba(0,255,65,.35)) drop-shadow(0 0 60px rgba(0,255,65,.15));transform:scale(1)}
+            50%{filter:drop-shadow(0 0 30px rgba(0,255,65,.55)) drop-shadow(0 0 80px rgba(0,255,65,.25));transform:scale(1.03)}
+        }
+
+        .ca-box-main{
+            margin-top:30px;
+            display:flex;align-items:center;gap:12px;
+            padding:12px 16px;
+            background:rgba(0,255,65,.06);
+            border:1px solid rgba(0,255,65,.2);
+            border-radius:3px;
+            pointer-events:auto;
+            cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='22' viewBox='0 0 16 22'%3E%3Cpath d='M0 0L0 16L4.5 11.5L14 21L16 18.5L6.5 9L16 -0.5L14 -3L4.5 6.5Z' fill='%2300ff41'/%3E%3C/svg%3E") 0 0, auto;
+            transition:all .2s ease;
+            max-width:460px;
+            width:100%;
+        }
+        .ca-box-main:hover{
+            background:rgba(0,255,65,.1);
+            border-color:rgba(0,255,65,.4);
+            box-shadow:0 0 20px rgba(0,255,65,.1);
+        }
+        .ca-box-main .ca-text{
+            font-family:'Courier New',monospace;font-size:11px;
+            color:rgba(255,255,255,.45);
+            word-break:break-all;line-height:1.5;
+            flex:1;user-select:all;
+        }
+        .ca-box-main .ca-copy-icon{
+            flex-shrink:0;
+            opacity:.35;
+            transition:opacity .2s ease;
+        }
+        .ca-box-main:hover .ca-copy-icon{opacity:.7}
+
+        .ee-overlay{
+            display:none;position:fixed;top:0;left:0;width:100%;height:100%;
+            background:rgba(0,0,0,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+            z-index:5000;justify-content:center;align-items:center;
+            flex-direction:column;gap:30px;
+        }
+        .ee-overlay.active{display:flex;pointer-events:auto}
+        .ee-pepe{
+            width:260px;height:260px;object-fit:contain;
+            filter:drop-shadow(0 0 20px rgba(0,255,65,.4)) drop-shadow(0 0 60px rgba(0,255,65,.2));
+            animation:logo-breathe 4s ease-in-out infinite;
+        }
+        .ee-text{
+            font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;
+            color:rgba(0,255,65,.7);letter-spacing:3px;text-align:center;
+            text-shadow:0 0 15px rgba(0,255,65,.4);line-height:1.8;
+        }
+        .ee-close{
+            position:absolute;top:20px;right:24px;
+            background:none;border:1px solid rgba(255,51,85,.3);
+            color:rgba(255,51,85,.6);font-family:'Orbitron',sans-serif;
+            font-size:10px;padding:6px 14px;border-radius:2px;
+            transition:all .2s;letter-spacing:2px;
+            cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='22' viewBox='0 0 16 22'%3E%3Cpath d='M0 0L0 16L4.5 11.5L14 21L16 18.5L6.5 9L16 -0.5L14 -3L4.5 6.5Z' fill='%2300ff41'/%3E%3C/svg%3E") 0 0, auto;
+        }
+        .ee-close:hover{background:rgba(255,51,85,.1);border-color:rgba(255,51,85,.6);color:#ff3355;box-shadow:0 0 15px rgba(255,51,85,.15)}
+
+        .toko-box{
+            background:rgba(0,255,65,.03);
+            border:1px solid rgba(0,255,65,.15);
+            border-radius:3px;
+            padding:20px;
+            margin-bottom:20px;
+        }
+        .toko-box-title{
+            font-family:'Orbitron',sans-serif;font-size:8px;
+            color:rgba(0,255,65,.5);letter-spacing:2px;
+            margin-bottom:12px;text-transform:uppercase;
+        }
+        .toko-row{
+            display:flex;justify-content:space-between;align-items:center;
+            padding:6px 0;border-bottom:1px solid rgba(0,255,65,.05);
+        }
+        .toko-row:last-child{border-bottom:none}
+        .toko-label{color:rgba(255,255,255,.35);font-size:13px}
+        .toko-value{color:rgba(0,255,65,.6);font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:1px}
+        .toko-value.red{color:rgba(255,51,85,.6)}
+        .toko-bar-wrap{
+            margin:15px 0 5px 0;
+            height:8px;background:rgba(0,255,65,.08);
+            border-radius:1px;overflow:hidden;
+        }
+        .toko-bar{
+            height:100%;width:100%;
+            background:linear-gradient(90deg,rgba(0,255,65,.6),rgba(0,255,65,.3));
+            border-radius:1px;
+        }
+        .toko-bar-label{
+            font-family:'Orbitron',sans-serif;font-size:8px;
+            color:rgba(0,255,65,.4);letter-spacing:2px;
+            margin-bottom:4px;
+        }
+        .toko-art{
+            font-family:'Courier New',monospace;
+            font-size:11px;line-height:1.4;
+            color:rgba(0,255,65,.4);
+            text-align:center;
+            margin:20px 0 10px 0;
+            white-space:pre;
+            user-select:none;
+        }
+        .toko-note{
+            font-size:12px;color:rgba(255,255,255,.2);
+            font-style:italic;margin-top:15px;
+            text-align:center;
+        }
+
+        .modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:2000;justify-content:center;align-items:center}
+        .modal-overlay.active{display:flex;pointer-events:auto}
+        .modal-content{background:rgba(0,12,4,.9);border:1px solid rgba(0,255,65,.2);border-radius:4px;padding:35px;max-width:580px;width:90%;max-height:85vh;overflow-y:auto;position:relative;box-shadow:0 0 40px rgba(0,255,65,.1)}
+        .modal-content::before,.modal-content::after{content:'';position:absolute;width:16px;height:16px;border-color:rgba(0,255,65,.4);border-style:solid}
+        .modal-content::before{top:-1px;left:-1px;border-width:2px 0 0 2px}
+        .modal-content::after{bottom:-1px;right:-1px;border-width:0 2px 2px 0}
+        .close-btn{position:absolute;top:12px;right:12px;background:none;border:1px solid rgba(255,51,85,.3);color:rgba(255,51,85,.6);font-family:'Orbitron',sans-serif;font-size:10px;padding:6px 12px;border-radius:2px;transition:all .2s;letter-spacing:2px;cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='22' viewBox='0 0 16 22'%3E%3Cpath d='M0 0L0 16L4.5 11.5L14 21L16 18.5L6.5 9L16 -0.5L14 -3L4.5 6.5Z' fill='%2300ff41'/%3E%3C/svg%3E") 0 0, auto}
+        .close-btn:hover{background:rgba(255,51,85,.1);border-color:rgba(255,51,85,.6);color:#ff3355;box-shadow:0 0 15px rgba(255,51,85,.15)}
+        .modal-title{font-family:'Orbitron',sans-serif;color:#0f0;font-size:16px;font-weight:700;margin-bottom:25px;text-shadow:0 0 15px rgba(0,255,65,.4);padding-bottom:15px;border-bottom:1px solid rgba(0,255,65,.1);letter-spacing:3px}
+        .modal-body{font-size:15px;line-height:1.9;color:rgba(255,255,255,.65);text-align:left}
+        .modal-body h3{font-family:'Orbitron',sans-serif;color:rgba(0,255,65,.7);margin-top:25px;margin-bottom:8px;font-size:10px;font-weight:700;letter-spacing:2px}
+        .modal-body ul{list-style:none;padding:0 0 0 16px;margin:8px 0}
+        .modal-body li{padding-left:14px;position:relative;margin-bottom:6px}
+        .modal-body li::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:5px;height:1px;background:rgba(0,255,65,.4)}
+        .modal-body::-webkit-scrollbar{width:4px}
+        .modal-body::-webkit-scrollbar-track{background:transparent}
+        .modal-body::-webkit-scrollbar-thumb{background:rgba(0,255,65,.2);border-radius:2px}
+
+        .btn{
+            display:inline-flex;align-items:center;
+            padding:12px 28px;font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;
+            letter-spacing:2px;text-transform:uppercase;text-decoration:none;color:#0f0;
+            background:rgba(0,255,65,.05);border:1px solid rgba(0,255,65,.3);border-radius:2px;
+            transition:all .2s ease;position:relative;overflow:hidden;width:100%;
+            cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='22' viewBox='0 0 16 22'%3E%3Cpath d='M0 0L0 16L4.5 11.5L14 21L16 18.5L6.5 9L16 -0.5L14 -3L4.5 6.5Z' fill='%2300ff41'/%3E%3C/svg%3E") 0 0, auto;
+        }
+        .btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(0,255,65,.1),transparent);transition:left .4s ease}
+        .btn:hover::before{left:100%}
+        .btn:hover{background:rgba(0,255,65,.1);border-color:rgba(0,255,65,.6);box-shadow:0 0 20px rgba(0,255,65,.15),inset 0 0 20px rgba(0,255,65,.05);color:#fff;text-shadow:0 0 10px rgba(0,255,65,.5)}
+        .btn:active{transform:scale(.97)}
+        .btn-red{color:#ff3355;border-color:rgba(255,51,85,.3);background:rgba(255,51,85,.05)}
+        .btn-red:hover{border-color:rgba(255,51,85,.6);box-shadow:0 0 20px rgba(255,51,85,.15);color:#ff6680;text-shadow:0 0 10px rgba(255,51,85,.5)}
+        .btn-yellow{color:#ffcc00;border-color:rgba(255,204,0,.3);background:rgba(255,204,0,.05)}
+        .btn-yellow:hover{border-color:rgba(255,204,0,.6);box-shadow:0 0 20px rgba(255,204,0,.15);color:#ffe066;text-shadow:0 0 10px rgba(255,204,0,.5)}
+        .btn-blue{color:#4488ff;border-color:rgba(68,136,255,.3);background:rgba(68,136,255,.05)}
+        .btn-blue:hover{border-color:rgba(68,136,255,.6);box-shadow:0 0 20px rgba(68,136,255,.15);color:#77aaff;text-shadow:0 0 10px rgba(68,136,255,.5)}
+        .btn-tg{color:#00aaff;border-color:rgba(0,170,255,.3);background:rgba(0,170,255,.05)}
+        .btn-tg:hover{border-color:rgba(0,170,255,.6);box-shadow:0 0 20px rgba(0,170,255,.15);color:#44ccff;text-shadow:0 0 10px rgba(0,170,255,.5)}
+        .btn-x{color:rgba(255,255,255,.6);border-color:rgba(255,255,255,.15);background:rgba(255,255,255,.03)}
+        .btn-x:hover{border-color:rgba(255,255,255,.4);box-shadow:0 0 20px rgba(255,255,255,.08);color:#fff;text-shadow:0 0 10px rgba(255,255,255,.3)}
+
+        .btn-icon{vertical-align:middle;margin-right:10px;flex-shrink:0}
+        .btn-with-icon{display:inline-flex;align-items:center}
+
+        .toast{
+            position:fixed;bottom:-80px;left:50%;transform:translateX(-50%);
+            background:rgba(0,12,4,.95);border:1px solid rgba(0,255,65,.3);border-radius:2px;
+            padding:14px 28px;font-family:'Orbitron',sans-serif;font-size:11px;color:#0f0;
+            letter-spacing:2px;z-index:3000;transition:bottom .4s cubic-bezier(.77,0,.175,1);
+            box-shadow:0 0 30px rgba(0,255,65,.15);pointer-events:none;white-space:nowrap;
+        }
+        .toast.show{bottom:40px}
+        .toast::before,.toast::after{content:'';position:absolute;width:10px;height:10px;border-color:rgba(0,255,65,.4);border-style:solid}
+        .toast::before{top:-1px;left:-1px;border-width:2px 0 0 2px}
+        .toast::after{bottom:-1px;right:-1px;border-width:0 2px 2px 0}
+
+        .roadmap-phase{position:relative;padding-left:28px;margin-bottom:24px}
+        .roadmap-phase::before{content:'';position:absolute;left:7px;top:8px;bottom:-24px;width:1px;background:rgba(0,255,65,.15)}
+        .roadmap-phase:last-child::before{display:none}
+        .roadmap-phase::after{content:'';position:absolute;left:3px;top:6px;width:9px;height:9px;border-radius:50%;border:1px solid rgba(0,255,65,.5);background:rgba(0,255,65,.1);box-shadow:0 0 8px rgba(0,255,65,.2)}
+        .roadmap-phase.phase-done::after{background:rgba(0,255,65,.5);box-shadow:0 0 12px rgba(0,255,65,.4)}
+        .roadmap-phase.phase-joke::after{border-color:rgba(255,204,0,.5);background:rgba(255,204,0,.1);box-shadow:0 0 8px rgba(255,204,0,.2)}
+        .roadmap-phase-title{font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;color:rgba(0,255,65,.8);letter-spacing:2px;margin-bottom:6px;text-shadow:0 0 10px rgba(0,255,65,.3)}
+        .roadmap-phase-done .roadmap-phase-title{color:#0f0;text-shadow:0 0 15px rgba(0,255,65,.5)}
+        .roadmap-phase-joke .roadmap-phase-title{color:rgba(255,204,0,.7);text-shadow:0 0 10px rgba(255,204,0,.3)}
+        .roadmap-phase p{font-size:14px;line-height:1.8;color:rgba(255,255,255,.5)}
+        .roadmap-phase-done p{color:rgba(255,255,255,.4)}
+        .roadmap-phase-joke p{color:rgba(255,204,0,.35)}
+        .roadmap-phase p span{color:rgba(0,255,65,.5)}
+
+        @media(max-width:600px){
+            .content-wrapper{padding-top:16vh;padding-left:10px;padding-right:10px}
+            .logo-img{width:220px;height:220px;margin-top:0}
+            h1{font-size:36px;letter-spacing:6px}
+            .sub-meme{font-size:12px;letter-spacing:5px;margin-bottom:20px}
+            .ca-box-main{margin-top:20px;max-width:320px;padding:10px 12px}
+            .ca-box-main .ca-text{font-size:9px}
+            .ca-box-main .ca-copy-icon svg{width:14px;height:14px}
+            .ee-pepe{width:200px;height:200px}
+            .ee-text{font-size:11px;letter-spacing:2px;padding:0 20px}
+            .side-menu{width:280px;right:-280px}
+            .hamburger{top:15px;right:15px}
+            .toast{font-size:9px;padding:12px 20px}
+            .toko-art{font-size:8px}
+            .toko-row{padding:5px 0}
+            .toko-label{font-size:12px}
+            .toko-value{font-size:10px}
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="c"></canvas>
+
+<script>
+(function(){
+    var canvas = document.getElementById('c');
+    var ctx = canvas.getContext('2d');
+    var katakana = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+    var pool = katakana + katakana + '0101010101ABCDEFGHIJKLMNOPQRSTUVWXYZ' + '△▽' + 'אבג';
+    function rc(){ return pool[Math.random() * pool.length | 0]; }
+    var FOCAL = 500, SPAWN_Z = 700, KILL_Z = 8, FOG_NEAR = 500, FOG_FAR = SPAWN_Z;
+    var BASE_SPEED = 2.5, FALL_SPEED = 0.5, COL_SPREAD_X = 1800, COL_SPREAD_Y = 600, COL_COUNT = 140;
+    var HEAD_COLORS = { bitcoin:{r:245,g:158,b:11}, robinhood:{r:0,g:200,b:5}, uniswap:{r:255,g:0,b:122}, satoshi:null };
+    var HEAD_WORDS = { bitcoin:'BITCOIN', robinhood:'ROBINHOOD', uniswap:'UNISWAP', satoshi:'SATOSHI' };
+    var W, H, dpr, mx = -9999, my = -9999, gt = 0, pT = 0;
+    var scanPat = null, vigGrad = null;
+    var FONT = '"MS Gothic","Yu Gothic","Noto Sans JP",monospace';
+    var cols = [], sparks = [];
+
+    function randomHeadType(){ var r = Math.random(); if(r<0.25) return 'bitcoin'; if(r<0.5) return 'robinhood'; if(r<0.75) return 'uniswap'; return 'satoshi'; }
+    function mkCol(forceZ){
+        var ml = 14 + (Math.random() * 18 | 0);
+        var z = forceZ !== undefined ? forceZ : (SPAWN_Z + Math.random() * 80);
+        var ht = randomHeadType(); var hw = HEAD_WORDS[ht];
+        return { x:(Math.random()-0.5)*COL_SPREAD_X, y:(Math.random()-0.5)*COL_SPREAD_Y, z:z, spd:BASE_SPEED*(0.6+Math.random()*0.8), fall:FALL_SPEED*(0.5+Math.random()*1.0), ml:ml, ch:[], si:0.5+Math.random()*0.8, st:Math.random()*0.3, bright:0.7+Math.random()*0.3, headType:ht, headWord:hw, headIdx:Math.random()*hw.length|0 };
+    }
+    function resize(){
+        dpr = Math.min(devicePixelRatio||1, 1.5);
+        W = innerWidth; H = innerHeight;
+        canvas.width = W * dpr; canvas.height = H * dpr;
+        canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        scanPat = null; vigGrad = null; initCols();
+    }
+    function initCols(){ cols = []; for(var i=0;i<COL_COUNT;i++) cols.push(mkCol(KILL_Z + Math.random()*(SPAWN_Z-KILL_Z))); sparks = []; }
+    function proj(x,y,z){ if(z<1) return null; var s=FOCAL/z; return {sx:W/2+x*s, sy:H/2+y*s, s:s, z:z}; }
+    function fog(z){ if(z<=FOG_NEAR) return 0; if(z>=FOG_FAR) return 1; return (z-FOG_NEAR)/(FOG_FAR-FOG_NEAR); }
+
+    canvas.addEventListener('mousemove', function(e){ mx=e.clientX; my=e.clientY; });
+    canvas.addEventListener('mouseleave', function(){ mx=-9999; my=-9999; });
+    canvas.addEventListener('touchmove', function(e){ e.preventDefault(); mx=e.touches[0].clientX; my=e.touches[0].clientY; }, {passive:false});
+    canvas.addEventListener('touchend', function(){ mx=-9999; my=-9999; });
+
+    function mkScan(){ var c=document.createElement('canvas'); c.width=4; c.height=4; var p=c.getContext('2d'); p.fillStyle='rgba(0,0,0,0.04)'; p.fillRect(0,2,4,2); scanPat=ctx.createPattern(c,'repeat'); }
+    function mkVig(){ var r=Math.max(W,H)*0.85; vigGrad=ctx.createRadialGradient(W/2,H/2,r*0.15,W/2,H/2,r); vigGrad.addColorStop(0,'rgba(0,0,0,0)'); vigGrad.addColorStop(0.4,'rgba(0,0,0,0.01)'); vigGrad.addColorStop(0.7,'rgba(0,0,0,0.15)'); vigGrad.addColorStop(1,'rgba(0,0,0,0.6)'); }
+
+    var gY=-1, gH=0, gA=0, gT=0, gOff=0;
+
+    function render(now){
+        requestAnimationFrame(render);
+        if(!pT) pT=now;
+        var rawDt=(now-pT)/16.667; var dt=Math.min(rawDt,3); pT=now; gt+=dt*0.016;
+        ctx.fillStyle='rgba(0,4,0,0.88)'; ctx.fillRect(0,0,W,H);
+        var hasMouse=mx>-999; var baseFs=14;
+
+        for(var i=0;i<cols.length;i++){
+            var c=cols[i]; c.z-=c.spd*dt; c.y+=c.fall*dt; c.st-=dt;
+            if(c.st<=0){ c.ch.push(rc()); if(c.ch.length>c.ml) c.ch.shift(); c.st=c.si; c.headIdx=(c.headIdx+1)%c.headWord.length; }
+            if(c.z<KILL_Z){
+                if(c.z<30){ var p=proj(c.x,c.y,Math.max(c.z,1)); if(p&&p.sx>-30&&p.sx<W+30&&p.sy>-30&&p.sy<H+30){ for(var s=0;s<2;s++) sparks.push({x:p.sx,y:p.sy,vx:(Math.random()-0.5)*2.5,vy:(Math.random()-0.5)*2.5,life:6+Math.random()*10,maxLife:16}); } }
+                c.x=(Math.random()-0.5)*COL_SPREAD_X; c.y=(Math.random()-0.5)*COL_SPREAD_Y; c.z=SPAWN_Z+Math.random()*80; c.ch=[]; c.st=c.si; c.spd=BASE_SPEED*(0.6+Math.random()*0.8);
+            }
+        }
+        cols.sort(function(a,b){ return b.z-a.z; });
+        ctx.textBaseline='top';
+        for(var i=0;i<cols.length;i++){
+            var c=cols[i]; var fg=fog(c.z); if(fg>=0.97) continue;
+            var alpha=(1-fg)*c.bright; if(alpha<0.03) continue;
+            var p=proj(c.x,c.y,c.z); if(!p) continue;
+            if(p.sx<-150||p.sx>W+150||p.sy<-200||p.sy>H+150) continue;
+            var sfs=Math.max(3,Math.min(baseFs*p.s,45)); var lineH=sfs*1.15; var len=c.ch.length; if(!len) continue;
+            ctx.font=sfs+'px '+FONT;
+            var mI=0;
+            if(hasMouse){ var dx=p.sx-mx, dy=p.sy-my; mI=Math.max(0,1-Math.sqrt(dx*dx+dy*dy)/120)*alpha; }
+            var bg=Math.min(255,70+alpha*150|0); var br=(alpha*8)|0; var bb=(alpha*8)|0;
+            var bodyColor='rgba('+br+','+bg+','+bb+','+(alpha*0.7).toFixed(2)+')';
+            var hc=HEAD_COLORS[c.headType]; var hwLen=c.headWord.length;
+            for(var j=0;j<len;j++){
+                var fh=len-1-j; var sy=p.sy-fh*lineH; if(sy<-sfs*2||sy>H+sfs*2) continue;
+                var hf=1-fh/c.ml; var tailStart=c.ml*0.75; var tf=fh>tailStart?1-(fh-tailStart)/(c.ml-tailStart):1;
+                var charA=hf*tf*alpha+mI*0.3*hf; if(charA<0.03) continue;
+                var drawChar=c.ch[j];
+                if(fh<3){
+                    var charPos=(c.headIdx+fh)%hwLen; drawChar=c.headWord[charPos];
+                    if(hc){ var dim=fh===0?1.0:0.55; var boost=fh===0?0.2:0; ctx.fillStyle='rgba('+hc.r+','+hc.g+','+hc.b+','+Math.min(1,charA*dim+boost).toFixed(2)+')'; }
+                    else{ if(fh===0){ ctx.fillStyle='rgba('+(170+mI*85|0)+',255,'+(170+mI*85|0)+','+Math.min(1,charA+0.2).toFixed(2)+')'; } else{ ctx.fillStyle='rgba('+(30+mI*150|0)+',255,'+(30+mI*100|0)+','+Math.min(1,charA).toFixed(2)+')'; } }
+                } else if(fh<5){ ctx.fillStyle='rgba('+(30+mI*150|0)+',255,'+(30+mI*100|0)+','+Math.min(1,charA).toFixed(2)+')'; }
+                else{ ctx.fillStyle=bodyColor; ctx.globalAlpha=Math.min(1,charA); }
+                ctx.fillText(drawChar,p.sx,sy); ctx.globalAlpha=1;
+            }
+            if(len>0&&c.z<300){
+                var glowA=(1-c.z/300)*0.18*alpha;
+                if(glowA>0.01){ var headY=p.sy-lineH; var gr=sfs*4; var gg=ctx.createRadialGradient(p.sx,headY,0,p.sx,headY,gr);
+                if(hc){ gg.addColorStop(0,'rgba('+hc.r+','+hc.g+','+hc.b+','+glowA.toFixed(3)+')'); gg.addColorStop(1,'rgba('+hc.r+','+hc.g+','+hc.b+',0)'); }
+                else{ gg.addColorStop(0,'rgba(0,255,65,'+glowA.toFixed(3)+')'); gg.addColorStop(1,'rgba(0,255,65,0)'); }
+                ctx.fillStyle=gg; ctx.fillRect(p.sx-gr,headY-gr,gr*2,gr*2); }
+            }
+        }
+        for(var i=sparks.length-1;i>=0;i--){ var s=sparks[i]; s.x+=s.vx*dt; s.y+=s.vy*dt; s.life-=dt; if(s.life<=0){ sparks.splice(i,1); continue; } ctx.fillStyle='rgba(0,255,65,'+((s.life/s.maxLife)*0.6).toFixed(2)+')'; ctx.fillRect(s.x-0.8,s.y-0.8,1.6,1.6); }
+        if(hasMouse){ var mg=ctx.createRadialGradient(mx,my,0,mx,my,120); mg.addColorStop(0,'rgba(0,255,65,0.06)'); mg.addColorStop(0.5,'rgba(0,255,65,0.02)'); mg.addColorStop(1,'rgba(0,255,65,0)'); ctx.fillStyle=mg; ctx.fillRect(mx-120,my-120,240,240); }
+        gT-=dt;
+        if(gT<=0){ if(Math.random()<0.003){ gY=Math.random()*H; gH=1+Math.random()*2; gA=0.05+Math.random()*0.1; gOff=(Math.random()-0.5)*6; gT=1+Math.random()*3; } else{ gY=-1; gT=0.5; } }
+        if(gY>0){ ctx.fillStyle='rgba(0,255,65,'+gA+')'; ctx.fillRect(gOff,gY,W,gH); }
+        if(!scanPat) mkScan(); ctx.fillStyle=scanPat; ctx.fillRect(0,0,W,H);
+        if(!vigGrad) mkVig(); ctx.globalAlpha=0.9+Math.sin(gt*2.8)*0.02; ctx.fillStyle=vigGrad; ctx.fillRect(0,0,W,H); ctx.globalAlpha=1;
+    }
+    addEventListener('resize', resize);
+    resize();
+    requestAnimationFrame(render);
+})();
+</script>
+
+<div class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+</div>
+
+<div class="side-menu" id="sideMenu">
+    <div class="menu-links">
+        <button class="btn menu-btn" onclick="openModal('aboutModal');toggleMenu()">ABOUT</button>
+        <button class="btn menu-btn" onclick="openModal('tokoModal');toggleMenu()">TOKENOMICS</button>
+        <button class="btn menu-btn" onclick="openModal('roadmapModal');toggleMenu()">ROADMAP</button>
+        <button class="btn btn-yellow menu-btn" onclick="openModal('roastModal');toggleMenu()">MORE ROASTS</button>
+        <button class="btn btn-blue menu-btn" onclick="openModal('faqModal');toggleMenu()">FAQ</button>
+        <button class="btn btn-red menu-btn" onclick="openModal('disclaimerModal');toggleMenu()">DISCLAIMER</button>
+        <div class="menu-divider"></div>
+        <a href="#" class="btn btn-tg btn-with-icon menu-btn">
+            <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="#00aaff">
+                <path d="M11.944 0A12 12 0 000 12a12 12 0 0012 12 12 12 0 0012-12A12 12 0 0012 0a12 12 0 00-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 01.171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.479.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+            </svg>
+            <span id="btnTgText">TELEGRAM</span>
+        </a>
+        <a href="#" class="btn btn-x btn-with-icon menu-btn">
+            <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="rgba(255,255,255,0.6)">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+            <span id="btnXText">X / TWITTER</span>
+        </a>
+    </div>
+    <div class="menu-footer">
+        <div class="footer-frog">🐸</div>
+        <div class="footer-text" id="footerText">KAERU 2026</div>
+    </div>
+</div>
+
+<div class="content-wrapper">
+    <h1 id="judulKaeru">KAERU</h1>
+    <div class="sub-meme" id="judulMeme">MEMECOIN</div>
+    <img src="kaeru.png" alt="KAERU Karakter" class="logo-img" id="logoImg">
+    <div class="ca-box-main" id="caBoxMain" onclick="copyCA()">
+        <span class="ca-text" id="caValue">COMING SOON</span>
+        <span class="ca-copy-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="rgba(0,255,65,0.6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+            </svg>
+        </span>
+    </div>
+</div>
+
+<div class="ee-overlay" id="eeOverlay">
+    <button class="ee-close" onclick="closeEE()">CLOSE</button>
+    <img src="pepe.png" alt="PEPE" class="ee-pepe">
+    <div class="ee-text">You found the hidden pepe<br>0 $KAERU send to ur wallet</div>
+</div>
+
+<div id="tokoModal" class="modal-overlay">
+    <div class="modal-content">
+        <button class="close-btn" onclick="closeModal('tokoModal')">CLOSE</button>
+        <div class="modal-title">TOKENOMICS</div>
+        <div class="modal-body">
+            <div class="toko-art">╔═══════════════════════════════════╗
+║        $KAERU TOKENOMICS          ║
+╚═══════════════════════════════════╝</div>
+            <div class="toko-box">
+                <div class="toko-box-title">Supply</div>
+                <div class="toko-row">
+                    <span class="toko-label">Total Supply</span>
+                    <span class="toko-value">1,000,000,000</span>
+                </div>
+                <div class="toko-bar-label">FAIR LAUNCH (CCA AUCTION) — 100%</div>
+                <div class="toko-bar-wrap"><div class="toko-bar"></div></div>
+            </div>
+            <div class="toko-box">
+                <div class="toko-box-title">Security</div>
+                <div class="toko-row">
+                    <span class="toko-label">Chain</span>
+                    <span class="toko-value">Robinhood Chain</span>
+                </div>
+                <div class="toko-row">
+                    <span class="toko-label">LP</span>
+                    <span class="toko-value">Auto-seeded on Uniswap v4</span>
+                </div>
+                <div class="toko-row">
+                    <span class="toko-label">Mint Function</span>
+                    <span class="toko-value">None</span>
+                </div>
+                <div class="toko-row">
+                    <span class="toko-label">Ownership</span>
+                    <span class="toko-value">Renounced</span>
+                </div>
+            </div>
+            <div class="toko-box">
+                <div class="toko-box-title">Allocation</div>
+                <div class="toko-row">
+                    <span class="toko-label">Dev Wallet</span>
+                    <span class="toko-value red">~$2 in ETH (gas only)</span>
+                </div>
+                <div class="toko-row">
+                    <span class="toko-label">Presale</span>
+                    <span class="toko-value red">None</span>
+                </div>
+                <div class="toko-row">
+                    <span class="toko-label">Team Alloc</span>
+                    <span class="toko-value red">None</span>
+                </div>
+                <div class="toko-row">
+                    <span class="toko-label">VC Alloc</span>
+                    <span class="toko-value red">None</span>
+                </div>
+            </div>
+            <div class="toko-note">No tax. No hidden supply. No bs.</div>
+        </div>
+    </div>
+</div>
+
+<div id="aboutModal" class="modal-overlay">
+    <div class="modal-content">
+        <button class="close-btn" onclick="closeModal('aboutModal')">CLOSE</button>
+        <div class="modal-title">ABOUT $KAERU</div>
+        <div class="modal-body">
+            <p>$KAERU was born out of boredom from watching "AI coins" claim they'll revolutionize everything.</p>
+            <h3>OUR HONESTY</h3>
+            <ul>
+                <li>No partnerships with any company whatsoever</li>
+                <li>No realistic roadmap</li>
+                <li>Just memes, honesty, and a dash of nihilism</li>
+            </ul>
+            <h3>WHY MATRIX?</h3>
+            <p>Because the crypto market IS the Matrix. Everyone's watching green numbers fall, thinking they're the main character. Spoiler: you're not Neo. You're just a background NPC whose portfolio is red.</p>
+            <h3>AI ROAST</h3>
+            <p>"As an AI, I must be honest: investing based on memes is gambling wrapped in technology buzzwords."</p>
+            <p style="color:rgba(255,255,255,.2);font-size:12px;margin-top:10px">— ChatGPT, when asked to review this coin</p>
+        </div>
+    </div>
+</div>
+
+<div id="roadmapModal" class="modal-overlay">
+    <div class="modal-content">
+        <button class="close-btn" onclick="closeModal('roadmapModal')">CLOSE</button>
+        <div class="modal-title">ROADMAP</div>
+        <div class="modal-body">
+            <div class="roadmap-phase phase-done">
+                <div class="roadmap-phase-title">PHASE 1 — WEB LIVE</div>
+                <p>Website goes live. Branding locked. Vibe established.</p>
+            </div>
+            <div class="roadmap-phase">
+                <div class="roadmap-phase-title">PHASE 2 — PRE-LAUNCH</div>
+                <p>Social accounts activated. Community gathering begins.</p>
+            </div>
+            <div class="roadmap-phase">
+                <div class="roadmap-phase-title">PHASE 3 — LAUNCH</div>
+                <p>CCA auction goes live on Robinhood Chain via Uniswap / Pools.trade. Place your bid. No sniping. No gas wars.</p>
+            </div>
+            <div class="roadmap-phase">
+                <div class="roadmap-phase-title">PHASE 4 — AUCTION PERIOD</div>
+                <p>Bids clear block by block. Bots cry. Organic content creation. Community grows. Memes spread.</p>
+            </div>
+            <div class="roadmap-phase">
+                <div class="roadmap-phase-title">PHASE 5 — SETTLEMENT + LP SEED</div>
+                <p>Auction settles at one fair clearing price. Liquidity auto-seeded on Uniswap v4. No rug pull. Ever.</p>
+            </div>
+            <div class="roadmap-phase">
+                <div class="roadmap-phase-title">PHASE 6 — MAKE FROG GREAT AGAIN</div>
+                <p>Global frog supremacy movement. Memes go mainstream. Frogs unite.</p>
+            </div>
+            <div class="roadmap-phase phase-joke">
+                <div class="roadmap-phase-title">PHASE 7 — ELON TWEETS KAERU</div>
+                <p>Elon tweets $KAERU. U guys buy high. We're not responsible.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="roastModal" class="modal-overlay">
+    <div class="modal-content">
+        <button class="close-btn" onclick="closeModal('roastModal')">CLOSE</button>
+        <div class="modal-title">ROAST CORNER</div>
+        <div class="modal-body">
+            <h3>AI COINS</h3>
+            <p>"Our AI can analyze the market!" — Yeah, but your AI also said LUNA was safe at $100.</p>
+            <h3>UTILITY COINS</h3>
+            <p>"We have real utility!" — Utility that nobody uses = no utility. Math is math.</p>
+            <h3>DEFI COINS</h3>
+            <p>"1000% APY yield farming!" — Until the rug pull hits. Then it's -100% real quick.</p>
+            <h3>NFT PROJECTS</h3>
+            <p>"Floor price will go up!" — Sure, right after all holders lose hope and move on.</p>
+            <h3>LAYER 2 TOKENS</h3>
+            <p>"We're faster and cheaper!" — So is writing numbers on a napkin. Doesn't make it valuable.</p>
+            <h3>LEVERAGE SYSTEM</h3>
+            <p>Leverage turns a small dip into a -100% portfolio. Then people wonder why crypto "can't go up."</p>
+            <h3>SELF-ROAST</h3>
+            <p>$KAERU: "We have nothing except honesty." Which is also worth nothing in crypto. We know.</p>
+        </div>
+    </div>
+</div>
+
+<div id="faqModal" class="modal-overlay">
+    <div class="modal-content">
+        <button class="close-btn" onclick="closeModal('faqModal')">CLOSE</button>
+        <div class="modal-title">FAQ</div>
+        <div class="modal-body">
+            <h3>Q: WEN MOON?</h3>
+            <p>A: Wen will you stop asking this to every single coin?</p>
+            <h3>Q: IS THIS SAFE?</h3>
+            <p>A: Nothing in crypto is "safe." Not your wallet, not your CEX, not even your hardware ledger that you bought from a random Amazon seller. At least we're honest about it.</p>
+            <h3>Q: WHO MADE THIS?</h3>
+            <p>A: One sleep-deprived degenerate and a frog. That's the entire team. No advisors. No VCs. No bs.</p>
+            <h3>Q: WHY SHOULD I BUY?</h3>
+            <p>A: You shouldn't, tbh. But you won't listen anyway, so here we are.</p>
+            <h3>Q: IS THERE A DEV WALLET?</h3>
+            <p>A: There is, but it's got less than the gas fee you just spent on that last transaction.</p>
+            <h3>Q: WHY THE NAME KAERU?</h3>
+            <p>A: Kaeru (蛙) means frog in Japanese. But kaeru (帰る) also means "to return" — same pronunciation, different kanji. That's why frogs are considered lucky in Japan. Your money comes back.</p>
+            <h3>Q: HOW DO I BUY?</h3>
+            <p>A: You don't "buy". You bid. $KAERU launches through a CCA auction (Continuous Clearing Auction) on Robinhood Chain. During the auction window you place a bid from the Uniswap interface, bids clear block by block, and everyone in the same clearing gets the same price. No sniper bots front-running you at block one. When the auction ends, liquidity is automatically seeded into a Uniswap v4 pool at the final price. You'll need an EVM wallet and some ETH for gas.</p>
+        </div>
+    </div>
+</div>
+
+<div id="disclaimerModal" class="modal-overlay">
+    <div class="modal-content">
+        <button class="close-btn" onclick="closeModal('disclaimerModal')">CLOSE</button>
+        <div class="modal-title">DISCLAIMER</div>
+        <div class="modal-body">
+            <p>This is a meme coin. No intrinsic value. No promises.</p>
+            <h3>WHAT WE PROMISE</h3>
+            <ul>
+                <li>No financial promises of any kind</li>
+                <li>No guarantee the price will go up</li>
+                <li>No "revolutionary" utility</li>
+                <li>Just honesty and satire, that's it</li>
+            </ul>
+            <h3>THE REALITY</h3>
+            <ul>
+                <li>Price is purely market-driven</li>
+                <li>We have no control over the chart</li>
+                <li>Trade at your own discretion</li>
+                <li>Memes first, numbers second</li>
+            </ul>
+            <p style="color:rgba(255,255,255,.2);font-size:12px;margin-top:20px">By being here, you acknowledge that this is for entertainment. Don't blame the frog.</p>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function ubahKeGayaJepang(teks) {
+    var petaKarakter = {
+        'A': '卂', 'B': '乃', 'C': '匚', 'D': '刀', 'E': '乇', 
+        'F': '下', 'G': 'ム', 'H': '卄', 'I': '工', 'J': '丁', 
+        'K': '长', 'L': 'L',  'M': '爪', 'N': '𠘨', 'O': '口', 
+        'P': '尸', 'Q': 'Q',   'R': '尺', 'S': '丂', 'T': 'ㄒ', 
+        'U': '凵', 'V': 'V',  'W': '山', 'X': '乂', 'Y': '丫', 'Z': '乙',
+        'a': '卂', 'b': '乃', 'c': '匚', 'd': '刀', 'e': '乇', 
+        'f': '下', 'g': 'ム', 'h': '卄', 'i': '工', 'j': '丁', 
+        'k': '长', 'l': 'L',  'm': '爪', 'n': '𠘨', 'o': '口', 
+        'p': '尸', 'q': 'q',   'r': '尺', 's': '丂', 't': 'ㄒ', 
+        'u': '凵', 'v': 'V',  'w': '山', 'x': '乂', 'y': '丫', 'z': '乙'
+    };
+    return teks.split('').map(function(huruf) { return petaKarakter[huruf] || huruf; }).join('');
+}
+
+var elKaeru = document.getElementById('judulKaeru');
+var elMeme = document.getElementById('judulMeme');
+var kaeruOriginal = ubahKeGayaJepang('KAERU');
+var memeOriginal = ubahKeGayaJepang('MEMECOIN');
+elKaeru.textContent = kaeruOriginal;
+elMeme.textContent = memeOriginal;
+
+document.getElementById('btnTgText').textContent = ubahKeGayaJepang('TELEGRAM');
+document.getElementById('btnXText').textContent = ubahKeGayaJepang('X / TWITTER');
+document.getElementById('footerText').textContent = ubahKeGayaJepang('KAERU 2026');
+
+var glitchSymbols = '山口ム匚△▽ㄒㄥㄧ零壹貳肆伍陸漆捌玖アイウエオカキクケコ';
+function pickSymbol() { return glitchSymbols[Math.random() * glitchSymbols.length | 0]; }
+
+function glitchReplace(el, original, numChars) {
+    var arr = original.split('');
+    var indices = [];
+    for (var i = 0; i < arr.length; i++) indices.push(i);
+    var pick = Math.min(numChars, indices.length);
+    for (var c = 0; c < pick; c++) {
+        var ri = Math.random() * indices.length | 0;
+        arr[indices[ri]] = pickSymbol();
+        indices.splice(ri, 1);
+    }
+    el.textContent = arr.join('');
+}
+
+function restoreText(el, original) { el.textContent = original; }
+
+function glitchFlicker(el, original, numChars, durationMs, onDone) {
+    el.classList.add('glitching');
+    var flickCount = 2 + (Math.random() * 3 | 0);
+    var flickDelay = Math.floor(durationMs / (flickCount + 1));
+    var count = 0;
+    function doFlicker() {
+        glitchReplace(el, original, numChars);
+        count++;
+        if (count <= flickCount) { setTimeout(doFlicker, flickDelay); }
+        else { restoreText(el, original); el.classList.remove('glitching'); if (onDone) onDone(); }
+    }
+    doFlicker();
+}
+
+function decideTargets() {
+    var r = Math.random();
+    if (r < 0.35) return { k: true, m: false };
+    if (r < 0.65) return { k: false, m: true };
+    return { k: true, m: true };
+}
+
+function runGlitchCycle() {
+    setTimeout(function() {
+        var t = decideTargets();
+        var numChars = 2 + (Math.random() * 2 | 0);
+        var targets = [];
+        if (t.k) targets.push({ el: elKaeru, orig: kaeruOriginal });
+        if (t.m) targets.push({ el: elMeme, orig: memeOriginal });
+        if (targets.length === 0) targets.push({ el: elKaeru, orig: kaeruOriginal });
+        var done = 0;
+        targets.forEach(function(item) {
+            glitchFlicker(item.el, item.orig, numChars, 200, function() {
+                done++;
+                if (done === targets.length) {
+                    var waitNormal = 3000 + Math.random() * 1000;
+                    setTimeout(function() {
+                        var t2 = decideTargets();
+                        var numChars2 = 1 + (Math.random() * 3 | 0);
+                        var holdTime = 800 + Math.random() * 1500;
+                        var targets2 = [];
+                        if (t2.k) targets2.push({ el: elKaeru, orig: kaeruOriginal });
+                        if (t2.m) targets2.push({ el: elMeme, orig: memeOriginal });
+                        if (targets2.length === 0) targets2.push({ el: elKaeru, orig: kaeruOriginal });
+                        targets2.forEach(function(item) {
+                            item.el.classList.add('glitching');
+                            glitchReplace(item.el, item.orig, numChars2);
+                        });
+                        setTimeout(function() {
+                            targets2.forEach(function(item) {
+                                restoreText(item.el, item.orig);
+                                item.el.classList.remove('glitching');
+                            });
+                            runGlitchCycle();
+                        }, holdTime);
+                    }, waitNormal);
+                }
+            });
+        });
+    }, 2000);
+}
+setTimeout(runGlitchCycle, 1500);
+
+var logoTapCount = 0;
+document.getElementById('logoImg').addEventListener('click', function() {
+    logoTapCount++;
+    if (logoTapCount >= 7 && logoTapCount % 7 === 0) {
+        document.getElementById('eeOverlay').classList.add('active');
+    }
+});
+function closeEE() { document.getElementById('eeOverlay').classList.remove('active'); }
+
+function toggleMenu(){
+    document.getElementById('sideMenu').classList.toggle('active');
+    document.getElementById('hamburgerBtn').classList.toggle('active');
+}
+function openModal(id){ document.getElementById(id).classList.add('active'); }
+function closeModal(id){ document.getElementById(id).classList.remove('active'); }
+document.querySelectorAll('.modal-overlay').forEach(function(modal){
+    modal.addEventListener('click', function(e){ if(e.target===modal) modal.classList.remove('active'); });
+});
+
+function copyCA(){
+    var caText = document.getElementById('caValue').textContent;
+    if(caText === 'COMING SOON'){ showToast('CA has been hacked'); return; }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(caText).then(function(){ showToast('CA has been hacked'); });
+    } else {
+        var ta = document.createElement('textarea');
+        ta.value = caText; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+        document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+        document.body.removeChild(ta); showToast('CA has been hacked');
+    }
+}
+
+function showToast(msg){
+    var toast = document.getElementById('toast');
+    toast.textContent = msg; toast.classList.add('show');
+    setTimeout(function(){ toast.classList.remove('show'); }, 2500);
+}
+</script>
+
+</body>
+</html>
